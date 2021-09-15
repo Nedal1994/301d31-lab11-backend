@@ -65,6 +65,7 @@ server.get('/', homeHandler)
 server.get('/getBooks', booksHandler)
 server.post('/addBook', addbookHandler)
 server.delete('/deleteBook/:id', deletebookHandler)
+server.put('/updateBook/:id', updatebookHandler)
 
 function homeHandler(req, res) {
   res.send('Homepage')
@@ -114,6 +115,26 @@ async function deletebookHandler(req, res)
   const bookId = req.params.id
   const email = req.query.email
   BookModel.deleteOne({ _id: bookId }, (error, result) => 
+  {
+    BookModel.find({ email: email }, (error, result) => 
+    {
+      if (error) 
+      {
+        console.log(error);
+      }
+      else
+       {
+        res.send(result)
+        console.log(result);
+      }
+    })
+  })
+}
+async function updatebookHandler(req, res)
+ {
+  const bookId = req.params.id
+  const {title,description,status,email} = req.body
+  BookModel.findByIdAndUpdate(bookId,{title,description,status}, (error, result) => 
   {
     BookModel.find({ email: email }, (error, result) => 
     {
